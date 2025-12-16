@@ -1,4 +1,3 @@
-in\co\rays\proj4\controller\BankCtl.class
 in\co\rays\proj4\util\HTMLUtility.class
 in\co\rays\proj4\controller\WelcomeCtl.class
 in\co\rays\proj4\controller\ORSView.class
@@ -13,7 +12,6 @@ in\co\rays\proj4\testmodel\TestUserModel.class
 in\co\rays\proj4\bean\FacultyBean.class
 in\co\rays\proj4\controller\CourseCtl.class
 in\co\rays\proj4\bean\SubjectBean.class
-in\co\rays\proj4\controller\BankListCtl.class
 in\co\rays\proj4\testmodel\TestTimeTable.class
 in\co\rays\proj4\testmodel\TestMarksheetModel.class
 in\co\rays\proj4\util\DataValidator.class
@@ -27,14 +25,13 @@ in\co\rays\proj4\testmodel\TestStudentModel.class
 in\co\rays\proj4\exception\RecordNotFoundException.class
 in\co\rays\proj4\exception\ApplicationException.class
 in\co\rays\proj4\exception\DuplicateRecordException.class
+in\co\rays\proj4\bean\StaffBean.class
 in\co\rays\proj4\controller\SubjectCtl.class
-in\co\rays\proj4\model\BankModel.class
 in\co\rays\proj4\model\StudentModel.class
 in\co\rays\proj4\controller\LoginCtl.class
 in\co\rays\proj4\controller\CollegeListCtl.class
 in\co\rays\proj4\util\EmailUtility.class
 in\co\rays\proj4\controller\StudentListCtl.class
-in\co\rays\proj4\bean\BankBean.class
 in\co\rays\proj4\testmodel\TestCollegeModel.class
 in\co\rays\proj4\controller\MyProfileCtl.class
 in\co\rays\proj4\model\UserModel.class
@@ -51,7 +48,6 @@ in\co\rays\proj4\controller\RoleListCtl.class
 in\co\rays\proj4\controller\RoleCtl.class
 in\co\rays\proj4\controller\StudentCtl.class
 in\co\rays\proj4\bean\UserBean.class
-in\co\rays\proj4\testmodel\TestBankModel.class
 in\co\rays\proj4\controller\MarksheetCtl.class
 in\co\rays\proj4\controller\ForgetPasswordCtl.class
 in\co\rays\proj4\model\CourseModel.class

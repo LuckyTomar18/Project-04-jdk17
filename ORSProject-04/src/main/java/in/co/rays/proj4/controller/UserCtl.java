@@ -1,6 +1,7 @@
 package in.co.rays.proj4.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -57,6 +58,11 @@ public class UserCtl extends BaseCtl {
 
 			e.printStackTrace();
 		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("Female", "Female");
+		map.put("Male", "Male");
+
+		request.setAttribute("map", map);
 	}
 
 	/**

@@ -111,10 +111,10 @@ public interface ORSView {
 	public String ERROR_CTL = APP_CONTEXT + "/ErrorCtl";
 
 	/** Bank management pages */
-	public String BANK__VIEW = PAGE_FOLDER + "/BankView.jsp";
-	public String BANK_CTL = APP_CONTEXT + "/ctl/BankCtl";
-	public String BANK__LIST_VIEW = PAGE_FOLDER + "/BankListView.jsp";
-	public String BANK_LIST_CTL = APP_CONTEXT + "/ctl/BankListCtl";
+	public String STAFF__VIEW = PAGE_FOLDER + "/StaffView.jsp";
+	public String STAFF_CTL = APP_CONTEXT + "/ctl/StaffCtl";
+	public String STAFF__LIST_VIEW = PAGE_FOLDER + "/StaffListView.jsp";
+	public String STAFF_LIST_CTL = APP_CONTEXT + "/ctl/StaffListCtl";
 
 	/** JavaDoc page */
 	public String JAVA_DOC = "/ORSProject-04/doc/index.html";

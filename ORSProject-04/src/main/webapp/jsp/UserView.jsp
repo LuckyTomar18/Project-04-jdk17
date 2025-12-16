@@ -22,19 +22,23 @@
 		<jsp:useBean id="bean" class="in.co.rays.proj4.bean.UserBean"
 			scope="request"></jsp:useBean>
 
+		<%
+		HashMap<String, String> map = (HashMap<String, String>) request.getAttribute("map");
+		%>
+
 
 		<%
-			List<UserBean> roleList = (List<UserBean>) request.getAttribute("roleList");
+		List<UserBean> roleList = (List<UserBean>) request.getAttribute("roleList");
 		%>
 
 		<div align="center">
 			<h1 align="center" style="margin-bottom: -15; color: navy">
 				<%
-					if (bean != null && bean.getId() > 0) {
+				if (bean != null && bean.getId() > 0) {
 				%>Update<%
-					} else {
+				} else {
 				%>Add<%
-					}
+				}
 				%>
 				User
 			</h1>
@@ -63,31 +67,36 @@
 			<table>
 				<tr>
 					<th align="left">First Name<span style="color: red">*</span></th>
-					<td><input type="text" name="firstName" placeholder="Enter First Name"
+					<td><input type="text" name="firstName"
+						placeholder="Enter First Name"
 						value="<%=DataUtility.getStringData(bean.getFirstName())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("firstName", request)%></font></td>
 				</tr>
 				<tr>
 					<th align="left">Last Name<span style="color: red">*</span></th>
-					<td><input type="text" name="lastName" placeholder="Enter Last Name"
+					<td><input type="text" name="lastName"
+						placeholder="Enter Last Name"
 						value="<%=DataUtility.getStringData(bean.getLastName())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("lastName", request)%></font></td>
 				</tr>
 				<tr>
 					<th align="left">Login Id<span style="color: red">*</span></th>
-					<td><input type="text" name="login" placeholder="Enter Email ID"
+					<td><input type="text" name="login"
+						placeholder="Enter Email ID"
 						value="<%=DataUtility.getStringData(bean.getLogin())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("login", request)%></font></td>
 				</tr>
 				<tr>
 					<th align="left">Password<span style="color: red">*</span></th>
-					<td><input type="password" name="password" placeholder="Enter Password"
+					<td><input type="password" name="password"
+						placeholder="Enter Password"
 						value="<%=DataUtility.getStringData(bean.getPassword())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("password", request)%></font></td>
 				</tr>
 				<tr>
 					<th align="left">Confirm Password<span style="color: red">*</span></th>
-					<td><input type="password" name="confirmPassword" placeholder="Enter Confirm Password"
+					<td><input type="password" name="confirmPassword"
+						placeholder="Enter Confirm Password"
 						value="<%=DataUtility.getStringData(bean.getPassword())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("confirmPassword", request)%></font></td>
 				</tr>
@@ -103,11 +112,7 @@
 					<th align="left">Gender<span style="color: red">*</span></th>
 					<td>
 						<%
-							HashMap<String, String> map = new HashMap<String, String>();
-							map.put("Male", "Male");
-							map.put("Female", "Female");
-
-							String htmlList = HTMLUtility.getList("gender", bean.getGender(), map);
+						String htmlList = HTMLUtility.getList("gender", bean.getGender(), map);
 						%> <%=htmlList%>
 					</td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("gender", request)%></font></td>
@@ -131,19 +136,19 @@
 				<tr>
 					<th></th>
 					<%
-						if (bean != null && bean.getId() > 0) {
+					if (bean != null && bean.getId() > 0) {
 					%>
 					<td align="left" colspan="2"><input type="submit"
 						name="operation" value="<%=UserCtl.OP_UPDATE%>"> <input
 						type="submit" name="operation" value="<%=UserCtl.OP_CANCEL%>">
 						<%
-							} else {
+						} else {
 						%>
 					<td align="left" colspan="2"><input type="submit"
 						name="operation" value="<%=UserCtl.OP_SAVE%>"> <input
 						type="submit" name="operation" value="<%=UserCtl.OP_RESET%>">
 						<%
-							}
+						}
 						%>
 				</tr>
 			</table>

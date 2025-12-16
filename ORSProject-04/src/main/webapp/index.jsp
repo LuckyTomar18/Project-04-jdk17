@@ -6,8 +6,6 @@
 	href="<%=ORSView.APP_CONTEXT%>/img/logo.png" sizes="16x16" />
 </head>
 <body>
-
-
 	<br>
 	<br>
 	<marquee behavior="alternate" scrollamount="300" loop="1">

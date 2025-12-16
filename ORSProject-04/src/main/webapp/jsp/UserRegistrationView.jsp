@@ -19,6 +19,9 @@
 	<form action="<%=ORSView.USER_REGISTRATION_CTL%>" method="post">
 		<jsp:useBean id="bean" class="in.co.rays.proj4.bean.UserBean"
 			scope="request"></jsp:useBean>
+			
+			<% HashMap <String,String> map =(HashMap <String,String>)request.getAttribute("map"); %>
+			
 		<div align="center">
 			<h1>User Registration</h1>
 
@@ -75,11 +78,7 @@
 				<tr>
 					<th>Gender:</th>
 					<td>
-						<%
-							HashMap map = new HashMap();
-							map.put("male", "male");
-							map.put("female", "female");
-						%> <%=HTMLUtility.getList("gender", DataUtility.getStringData(bean.getGender()), map)%>
+						 <%=HTMLUtility.getList("gender", DataUtility.getStringData(bean.getGender()), map)%>
 					</td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("gender", request)%></font></td>
 				</tr>

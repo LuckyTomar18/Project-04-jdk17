@@ -1,6 +1,7 @@
 package in.co.rays.proj4.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,6 +40,16 @@ import in.co.rays.proj4.util.ServletUtility;
 public class UserRegistrationCtl extends BaseCtl {
 
 	public static final String OP_SIGN_UP = "Sign Up";
+	
+	
+	@Override
+	protected void preload(HttpServletRequest request) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("Female", "Female");
+		map.put("Male", "Male");
+
+		request.setAttribute("map", map);
+	}
 
 	  /**
      * Validates the registration form parameters.
