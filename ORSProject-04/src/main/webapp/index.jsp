@@ -10,6 +10,7 @@
 	<br>
 	<marquee behavior="alternate" scrollamount="300" loop="1">
 		<div align="center">
+<h1>Lucky's Web</h1>
 			<img src="img/customLogo.jpg" align="middle" width="318" height="127"
 				border="0">
 		</div>
