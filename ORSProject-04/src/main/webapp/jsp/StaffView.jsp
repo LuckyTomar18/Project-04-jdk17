@@ -66,7 +66,7 @@
 				</tr>
 				<tr>
 					<th>Joining Date:</th>
-					<td><input type="text" id="udate" name="joiningDate" placeholde="Enter Date"
+					<td><input type="text" id="udate" name="joiningDate" placeholder="Enter Date"
 						value="<%=DataUtility.getDateString(bean.getJoiningDate())%>"
 						style="width: 98%"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("joiningDate", request)%></font></td>
