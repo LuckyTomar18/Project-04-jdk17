@@ -20,7 +20,7 @@
 
 		<div align="center">
 
-<h1> 20/12/2025</h1>
+
 			<h1>Login</h1>
 
 			<div style="height: 15px; margin-bottom: 12px">
