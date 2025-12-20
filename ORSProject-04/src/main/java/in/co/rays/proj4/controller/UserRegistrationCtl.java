@@ -53,14 +53,14 @@ public class UserRegistrationCtl extends BaseCtl {
 
 	  /**
      * Validates the registration form parameters.
-     * <ul>
-     *   <li>firstName and lastName must be present and valid names</li>
-     *   <li>login must be present and a valid email</li>
-     *   <li>password must meet length and strength requirements</li>
-     *   <li>confirmPassword must match password</li>
-     *   <li>gender and dob must be present (dob must be a valid date)</li>
-     *   <li>mobileNo must be present, 10 digits and a valid phone number</li>
-     * </ul>
+     * 
+     *   firstName and lastName must be present and valid names
+     *   login must be present and a valid email
+     *   password must meet length and strength requirements
+     *   confirmPassword must match password
+     *   gender and dob must be present (dob must be a valid date)
+     *   mobileNo must be present, 10 digits and a valid phone number
+     * 
      *
      * @param request the current {@link HttpServletRequest}
      * @return {@code true} if validation passes; {@code false} otherwise

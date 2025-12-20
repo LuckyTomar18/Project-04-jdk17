@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import in.co.rays.proj4.bean.CollegeBean;
 import in.co.rays.proj4.exception.ApplicationException;
 import in.co.rays.proj4.exception.DatabaseException;
@@ -25,6 +27,7 @@ import in.co.rays.proj4.util.JDBCDataSource;
  */
 public class CollegeModel {
 
+	 private static Logger log = Logger.getLogger(CollegeModel.class);
 	  /**
      * Returns the next primary key value for the st_college table.
      *
@@ -32,6 +35,9 @@ public class CollegeModel {
      * @throws DatabaseException if a database error occurs while retrieving the maximum id
      */
 	public Integer nextPk() throws DatabaseException {
+		
+		 log.debug("CollegeModel nextPk started");
+		 
 		Connection conn = null;
 		int pk = 0;
 
@@ -65,6 +71,9 @@ public class CollegeModel {
      * @throws DuplicateRecordException   if a college with same name already exists
      */
 	public long add(CollegeBean bean) throws ApplicationException, DuplicateRecordException {
+		
+		 log.debug("CollegeModel add started");
+		 
 		Connection conn = null;
 		int pk = 0;
 
@@ -121,6 +130,8 @@ public class CollegeModel {
      */
 	public void update(CollegeBean bean) throws ApplicationException, DuplicateRecordException {
 
+		 log.debug("CollegeModel update started for ID : " + bean.getId());
+		
 		Connection conn = null;
 
 		CollegeBean beanExist = findByName(bean.getName());
@@ -166,6 +177,9 @@ public class CollegeModel {
      * @throws ApplicationException if a general application/database error occurs
      */
 	public void delete(CollegeBean bean) throws ApplicationException {
+		
+		log.debug("CollegeModel delete started for ID : " + bean.getId());
+		
 		Connection conn = null;
 		try {
 			conn = JDBCDataSource.getConnection();
@@ -195,6 +209,8 @@ public class CollegeModel {
      * @throws ApplicationException if a general application/database error occurs
      */
 	public CollegeBean findByPk(long pk) throws ApplicationException {
+		
+		 log.debug("CollegeModel findByPk started, PK = " + pk);
 
 		StringBuffer sql = new StringBuffer("select * from st_college where id = ?");
 
@@ -237,6 +253,8 @@ public class CollegeModel {
      * @throws ApplicationException if a general application/database error occurs
      */
 	public CollegeBean findByName(String name) throws ApplicationException {
+		
+		log.debug("CollegeModel findByName started, Name = " + name);
 
 		StringBuffer sql = new StringBuffer("select * from st_college where name = ?");
 
@@ -294,6 +312,8 @@ public class CollegeModel {
      * @throws ApplicationException if a general application/database error occurs
      */
 	public List<CollegeBean> search(CollegeBean bean, int pageNo, int pageSize) throws ApplicationException {
+		
+		log.debug("CollegeModel search started");
 
 		StringBuffer sql = new StringBuffer("select * from st_college where 1 = 1");
 

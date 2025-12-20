@@ -1,3 +1,4 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="java.util.List"%>
 <%@page import="in.co.rays.proj4.bean.StaffBean"%>
 <%@page import="in.co.rays.proj4.util.HTMLUtility"%>
@@ -20,18 +21,20 @@
 		<jsp:useBean id="bean" class="in.co.rays.proj4.bean.StaffBean"
 			scope="request"></jsp:useBean>
 
+
 		<%
-		List<StaffBean> staffList = (List<StaffBean>) request.getAttribute("staffList");
+			HashMap<String, String> map = (HashMap<String, String>) request.getAttribute("map");
 		%>
+
 
 		<div align="center">
 			<h1 style="margin-bottom: -15; color: navy">
 				<%
-				if (bean != null && bean.getId() > 0) {
+					if (bean != null && bean.getId() > 0) {
 				%>Update<%
-				} else {
+					} else {
 				%>Add<%
-				}
+					}
 				%>
 				Staff
 			</h1>
@@ -66,7 +69,8 @@
 				</tr>
 				<tr>
 					<th>Joining Date:</th>
-					<td><input type="text" id="udate" name="joiningDate" placeholder="Enter Date"
+					<td><input type="text" id="udate" name="joiningDate"
+						placeholder="Enter Date"
 						value="<%=DataUtility.getDateString(bean.getJoiningDate())%>"
 						style="width: 98%"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("joiningDate", request)%></font></td>
@@ -74,39 +78,39 @@
 
 				<tr>
 					<th>Division:<span style="color: red">*</span></th>
-					<td><%=HTMLUtility.getList("division", bean.getDivision(), staffList)%>
+					<td><%=HTMLUtility.getList("division", bean.getDivision(), map)%>
 					</td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("division", request)%></font></td>
 				</tr>
-				
+
 				<tr>
 					<th>Previous Employer<span style="color: red">*</span></th>
 					<td><input type="text" name="previousEmployer"
 						placeholder="Enter Previous Employer"
-						value="<%=DataUtility.getStringData(bean.getFullName())%>"></td>
+						value="<%=DataUtility.getStringData(bean.getPreviousEmployer())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("previousEmployer", request)%>
 					</font></td>
 				</tr>
-				
+
 				<tr>
 
 					<th></th>
 					<%
-					if (bean != null && bean.getId() > 0) {
+						if (bean != null && bean.getId() > 0) {
 					%>
 					<td align="left" colspan="2"><input type="submit"
 						name="operation" value="<%=StaffCtl.OP_UPDATE%>"> <input
 						type="submit" name="operation" value="<%=StaffCtl.OP_CANCEL%>">
 					</td>
 					<%
-					} else {
+						} else {
 					%>
 					<td align="left" colspan="2"><input type="submit"
 						name="operation" value="<%=StaffCtl.OP_SAVE%>"> <input
 						type="submit" name="operation" value="<%=StaffCtl.OP_RESET%>">
 					</td>
 					<%
-					}
+						}
 					%>
 				</tr>
 			</table>

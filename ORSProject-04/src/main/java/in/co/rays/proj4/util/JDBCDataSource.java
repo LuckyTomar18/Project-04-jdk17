@@ -40,7 +40,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
  * connections for all model classes.
  * </p>
  *
- * @author
+ * @author Lucky
  * @version 1.0
  */
 public final class JDBCDataSource {

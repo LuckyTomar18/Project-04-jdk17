@@ -32,7 +32,7 @@ public class TestCousreModel {
 
 		try {
 			model.add(bean);
-		} catch (DatabaseException | ApplicationException | DuplicateRecordException e) {
+		} catch (ApplicationException | DuplicateRecordException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

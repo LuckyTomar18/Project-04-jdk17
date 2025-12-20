@@ -62,7 +62,7 @@
 	<a href="<%=ORSView.COLLEGE_CTL%>"><b>Add College</b></a> |
 	<a href="<%=ORSView.COLLEGE_LIST_CTL%>"><b>College List</b></a> |
 
-	<a href="<%=ORSView.COLLEGE_LIST_CTL%>"><b>College List</b></a> |
+	<a href="<%=ORSView.STAFF_LIST_CTL%>"><b>Staff List</b></a> |
 	<a href="<%=ORSView.STAFF_CTL%>"><b>Add Staff</b></a> |
 
 

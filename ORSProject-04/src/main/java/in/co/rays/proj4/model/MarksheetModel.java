@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import in.co.rays.proj4.bean.MarksheetBean;
 import in.co.rays.proj4.bean.StudentBean;
 import in.co.rays.proj4.exception.ApplicationException;
@@ -20,29 +22,31 @@ import in.co.rays.proj4.util.JDBCDataSource;
  * It uses {@link JDBCDataSource} to obtain and close connections and throws
  * application-specific checked exceptions to signal error conditions.
  *
- * Responsibilities:
- *  - generate next primary key
- *  - add / update / delete marksheet records
- *  - find marksheet by PK or roll number
- *  - search and list marksheets with optional pagination
- *  - get merit list ordered by total marks
+ * Responsibilities: - generate next primary key - add / update / delete
+ * marksheet records - find marksheet by PK or roll number - search and list
+ * marksheets with optional pagination - get merit list ordered by total marks
  *
- * Note: SQL uses simple string-building for filters (consistent with the
- * rest of the project). Care should be taken if inputs can contain special
- * characters — ideally use parameterized queries for filters.
+ * Note: SQL uses simple string-building for filters (consistent with the rest
+ * of the project). Care should be taken if inputs can contain special
+ * characters ï¿½ ideally use parameterized queries for filters.
  *
  * @author Lucky
  * @version 1.0
  */
 public class MarksheetModel {
 
-	 /**
-     * Returns the next primary key value for the st_marksheet table.
-     *
-     * @return next primary key value
-     * @throws DatabaseException if a database error occurs while retrieving the maximum id
-     */
+	private static Logger log = Logger.getLogger(MarksheetModel.class);
+
+	/**
+	 * Returns the next primary key value for the st_marksheet table.
+	 *
+	 * @return next primary key value
+	 * @throws DatabaseException if a database error occurs while retrieving the
+	 *                           maximum id
+	 */
 	public Integer nextPk() throws DatabaseException {
+
+		log.debug("MarksheetModel nextPk started");
 		int pk = 0;
 		Connection conn = null;
 
@@ -57,6 +61,8 @@ public class MarksheetModel {
 			rs.close();
 			pstmt.close();
 
+			log.debug("Next PK generated : " + (pk + 1));
+
 		} catch (Exception e) {
 			throw new DatabaseException("Exception : Exception in getting PK");
 		} finally {
@@ -67,16 +73,18 @@ public class MarksheetModel {
 
 	}
 
-	 /**
-     * Adds a new marksheet record to the database.
-     * Resolves student name from StudentModel and checks duplicate roll number.
-     *
-     * @param bean marksheet data
-     * @return generated primary key
-     * @throws ApplicationException     for general DB errors
-     * @throws DuplicateRecordException if roll number already exists
-     */
+	/**
+	 * Adds a new marksheet record to the database. Resolves student name from
+	 * StudentModel and checks duplicate roll number.
+	 *
+	 * @param bean marksheet data
+	 * @return generated primary key
+	 * @throws ApplicationException     for general DB errors
+	 * @throws DuplicateRecordException if roll number already exists
+	 */
 	public long add(MarksheetBean bean) throws ApplicationException, DuplicateRecordException {
+
+		log.debug("MarksheetModel add started");
 
 		Connection conn = null;
 
@@ -89,6 +97,7 @@ public class MarksheetModel {
 		MarksheetBean duplicateMarksheet = findByRollNo(bean.getRollNo());
 
 		if (duplicateMarksheet != null) {
+			log.warn("Duplicate Roll No : " + bean.getRollNo());
 			throw new DuplicateRecordException("Roll Number already exists");
 		}
 
@@ -112,13 +121,17 @@ public class MarksheetModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+
+			log.info("Marksheet added successfully, PK = " + pk);
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
 				conn.rollback();
 			} catch (Exception ex) {
+				log.error("Add rollback failed", ex);
 				throw new ApplicationException("add rollback exception " + ex.getMessage());
 			}
+			log.error("Add rollback failed", e);
 			throw new ApplicationException("Exception in add marksheet");
 		} finally {
 			JDBCDataSource.closeConnection(conn);
@@ -126,21 +139,24 @@ public class MarksheetModel {
 		return pk;
 	}
 
-	 /**
-     * Updates an existing marksheet record.
-     * Ensures roll number uniqueness (except for current record) and resolves student name.
-     *
-     * @param bean marksheet with updated data
-     * @throws ApplicationException     for general DB errors
-     * @throws DuplicateRecordException if another record with same roll no exists
-     */
+	/**
+	 * Updates an existing marksheet record. Ensures roll number uniqueness (except
+	 * for current record) and resolves student name.
+	 *
+	 * @param bean marksheet with updated data
+	 * @throws ApplicationException     for general DB errors
+	 * @throws DuplicateRecordException if another record with same roll no exists
+	 */
 	public void update(MarksheetBean bean) throws ApplicationException, DuplicateRecordException {
+
+		log.debug("MarksheetModel update started, ID = " + bean.getId());
 
 		Connection conn = null;
 
 		MarksheetBean beanExist = findByRollNo(bean.getRollNo());
 
 		if (beanExist != null && beanExist.getId() != bean.getId()) {
+			log.warn("Duplicate Roll No on update : " + bean.getRollNo());
 			throw new DuplicateRecordException("Roll No is already exist");
 		}
 
@@ -168,25 +184,32 @@ public class MarksheetModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+
+			log.info("Marksheet updated successfully, ID = " + bean.getId());
+
 		} catch (Exception e) {
 			try {
 				conn.rollback();
 			} catch (Exception ex) {
+				log.error("Update rollback failed", ex);
 				throw new ApplicationException("Update rollback exception " + ex.getMessage());
 			}
+			log.error("Exception in updating Marksheet", e);
 			throw new ApplicationException("Exception in updating Marksheet ");
 		} finally {
 			JDBCDataSource.closeConnection(conn);
 		}
 	}
 
-	 /**
-     * Deletes a marksheet record.
-     *
-     * @param bean marksheet bean with id to delete
-     * @throws ApplicationException for general DB errors
-     */
+	/**
+	 * Deletes a marksheet record.
+	 *
+	 * @param bean marksheet bean with id to delete
+	 * @throws ApplicationException for general DB errors
+	 */
 	public void delete(MarksheetBean bean) throws ApplicationException {
+
+		log.debug("MarksheetModel delete started, ID = " + bean.getId());
 
 		Connection conn = null;
 
@@ -199,12 +222,17 @@ public class MarksheetModel {
 			pstmt.executeUpdate();
 			conn.commit(); // End transaction
 			pstmt.close();
+
+			log.info("Marksheet deleted successfully, ID = " + bean.getId());
+
 		} catch (Exception e) {
 			try {
 				conn.rollback();
 			} catch (Exception ex) {
+				log.error("Delete rollback failed", ex);
 				throw new ApplicationException("Delete rollback exception " + ex.getMessage());
 			}
+			log.error("Exception in delete marksheet", e);
 			throw new ApplicationException("Exception in delete marksheet");
 		} finally {
 			JDBCDataSource.closeConnection(conn);
@@ -212,13 +240,15 @@ public class MarksheetModel {
 	}
 
 	/**
-     * Finds a marksheet by primary key.
-     *
-     * @param pk primary key id
-     * @return found MarksheetBean or null if not found
-     * @throws ApplicationException for general DB errors
-     */
+	 * Finds a marksheet by primary key.
+	 *
+	 * @param pk primary key id
+	 * @return found MarksheetBean or null if not found
+	 * @throws ApplicationException for general DB errors
+	 */
 	public MarksheetBean findByPk(long pk) throws ApplicationException {
+
+		log.debug("MarksheetModel findByPk started, PK = " + pk);
 
 		StringBuffer sql = new StringBuffer("select * from st_marksheet where id = ?");
 		MarksheetBean bean = null;
@@ -246,6 +276,7 @@ public class MarksheetModel {
 			rs.close();
 			pstmt.close();
 		} catch (Exception e) {
+			log.error("Exception in findByPk", e);
 			throw new ApplicationException("Exception in getting marksheet by pk");
 		} finally {
 			JDBCDataSource.closeConnection(conn);
@@ -253,14 +284,16 @@ public class MarksheetModel {
 		return bean;
 	}
 
-	 /**
-     * Finds a marksheet by roll number.
-     *
-     * @param rollNo roll number to search
-     * @return found MarksheetBean or null if not found
-     * @throws ApplicationException for general DB errors
-     */
+	/**
+	 * Finds a marksheet by roll number.
+	 *
+	 * @param rollNo roll number to search
+	 * @return found MarksheetBean or null if not found
+	 * @throws ApplicationException for general DB errors
+	 */
 	public MarksheetBean findByRollNo(String rollNo) throws ApplicationException {
+
+		log.debug("MarksheetModel findByRollNo started, RollNo = " + rollNo);
 
 		StringBuffer sql = new StringBuffer("select * from st_marksheet where roll_no = ?");
 		MarksheetBean bean = null;
@@ -288,6 +321,9 @@ public class MarksheetModel {
 			rs.close();
 			pstmt.close();
 		} catch (Exception e) {
+
+			log.error("Exception in findByRollNo", e);
+
 			throw new ApplicationException("Exception in getting marksheet by roll no");
 		} finally {
 			JDBCDataSource.closeConnection(conn);
@@ -295,16 +331,19 @@ public class MarksheetModel {
 		return bean;
 	}
 
-	 /**
-     * Searches marksheets by criteria in bean. Supports pagination when pageSize &gt; 0.
-     *
-     * @param bean     filter criteria (nullable)
-     * @param pageNo   page number (1-based) used only if pageSize &gt; 0
-     * @param pageSize number of records per page; 0 disables pagination
-     * @return list of matching MarksheetBean
-     * @throws ApplicationException for general DB errors
-     */
+	/**
+	 * Searches marksheets by criteria in bean. Supports pagination when pageSize
+	 * &gt; 0.
+	 *
+	 * @param bean     filter criteria (nullable)
+	 * @param pageNo   page number (1-based) used only if pageSize &gt; 0
+	 * @param pageSize number of records per page; 0 disables pagination
+	 * @return list of matching MarksheetBean
+	 * @throws ApplicationException for general DB errors
+	 */
 	public List<MarksheetBean> search(MarksheetBean bean, int pageNo, int pageSize) throws ApplicationException {
+
+		log.debug("MarksheetModel search started");
 
 		StringBuffer sql = new StringBuffer("select * from st_marksheet where 1=1");
 
@@ -357,6 +396,7 @@ public class MarksheetModel {
 			}
 			rs.close();
 		} catch (Exception e) {
+			log.error("Exception in search Marksheet", e);
 			throw new ApplicationException("Update rollback exception " + e.getMessage());
 		} finally {
 			JDBCDataSource.closeConnection(conn);
@@ -364,16 +404,18 @@ public class MarksheetModel {
 		return list;
 	}
 
-	 /**
-     * Returns merit list: students who passed all subjects (marks &gt; 33) ordered by total marks desc.
-     * Supports pagination.
-     *
-     * @param pageNo   page number (1-based) if using pagination
-     * @param pageSize page size; pass 0 to disable pagination
-     * @return list of top marksheet records by total
-     * @throws ApplicationException for general DB errors
-     */
+	/**
+	 * Returns merit list: students who passed all subjects (marks &gt; 33) ordered
+	 * by total marks desc. Supports pagination.
+	 *
+	 * @param pageNo   page number (1-based) if using pagination
+	 * @param pageSize page size; pass 0 to disable pagination
+	 * @return list of top marksheet records by total
+	 * @throws ApplicationException for general DB errors
+	 */
 	public List<MarksheetBean> getMeritList(int pageNo, int pageSize) throws ApplicationException {
+
+		log.debug("MarksheetModel getMeritList started");
 
 		ArrayList<MarksheetBean> list = new ArrayList<MarksheetBean>();
 		StringBuffer sql = new StringBuffer(
@@ -403,6 +445,7 @@ public class MarksheetModel {
 			rs.close();
 			pstmt.close();
 		} catch (Exception e) {
+			log.error("Exception in getting merit list of Marksheet", e);
 			throw new ApplicationException("Exception in getting merit list of Marksheet");
 		} finally {
 			JDBCDataSource.closeConnection(conn);

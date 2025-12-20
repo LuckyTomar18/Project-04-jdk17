@@ -135,7 +135,7 @@ public class CourseCtl extends BaseCtl {
             } catch (DuplicateRecordException e) {
                 ServletUtility.setBean(bean, request);
                 ServletUtility.setErrorMessage("Course already exists", request);
-            } catch (ApplicationException | DatabaseException e) {
+            } catch (ApplicationException e) {
                 e.printStackTrace();
                 return;
             }

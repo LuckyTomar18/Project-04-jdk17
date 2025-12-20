@@ -1,6 +1,7 @@
 package in.co.rays.proj4.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -25,14 +26,13 @@ public class StaffCtl extends BaseCtl {
 
 	@Override
 	protected void preload(HttpServletRequest request) {
-		StaffModel model = new StaffModel();
-		try {
-			List<StaffBean> staffList = model.list();
-			request.setAttribute("staffList", staffList);
-		} catch (ApplicationException e) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("IT", "IT");
+		map.put("HR", "HR");
+		map.put("FINANCE", "FINANCE");
+		map.put("MARKETING", "MARKETING");
 
-			e.printStackTrace();
-		}
+		request.setAttribute("map", map);
 
 	}
 
@@ -51,7 +51,7 @@ public class StaffCtl extends BaseCtl {
 		if (DataValidator.isNull(request.getParameter("joiningDate"))) {
 			request.setAttribute("joiningDate", PropertyReader.getValue("error.require", "Date"));
 			pass = false;
-		} else if (!DataValidator.isDate(request.getParameter("joinDate"))) {
+		} else if (!DataValidator.isDate(request.getParameter("joiningDate"))) {
 			request.setAttribute("joiningDate", PropertyReader.getValue("error.date", "Date"));
 			pass = false;
 		}
@@ -75,7 +75,7 @@ public class StaffCtl extends BaseCtl {
 		bean.setFullName(DataUtility.getString(request.getParameter("fullName")));
 		bean.setJoiningDate(DataUtility.getDate(request.getParameter("joiningDate")));
 		bean.setDivision(DataUtility.getString(request.getParameter("division")));
-		bean.setDivision(DataUtility.getString(request.getParameter("Previous Employer")));
+		bean.setPreviousEmployer(DataUtility.getString(request.getParameter("previousEmployer")));
 
 		populateDTO(bean, request);
 		return bean;
@@ -84,6 +84,21 @@ public class StaffCtl extends BaseCtl {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		long id = DataUtility.getLong(request.getParameter("id"));
+
+		StaffModel model = new StaffModel();
+
+		if (id > 0) {
+			try {
+				StaffBean bean = model.findByPk(id);
+				ServletUtility.setBean(bean, request);
+			} catch (ApplicationException e) {
+				e.printStackTrace();
+				ServletUtility.handleException(e, request, response);
+				return;
+			}
+		}
 
 		ServletUtility.forward(getView(), request, response);
 	}
@@ -91,25 +106,49 @@ public class StaffCtl extends BaseCtl {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		String op = DataUtility.getString(request.getParameter("operation"));
-		UserModel model = new UserModel();
-		
+		StaffModel model = new StaffModel();
+		long id = DataUtility.getLong(request.getParameter("id"));
+
 		if (OP_SAVE.equalsIgnoreCase(op)) {
 
-			UserBean bean = (UserBean) populateBean(request);
+			StaffBean bean = (StaffBean) populateBean(request);
 			try {
 				model.add(bean);
 				ServletUtility.setBean(bean, request);
 				ServletUtility.setSuccessMessage("User added successfully", request);
 			} catch (ApplicationException e) {
-				// TODO Auto-generated catch block
+				ServletUtility.setBean(bean, request);
+				ServletUtility.setErrorMessage("Invalid Format", request);
 				e.printStackTrace();
 			} catch (DuplicateRecordException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if (OP_UPDATE.equalsIgnoreCase(op)) {
+			StaffBean bean = (StaffBean) populateBean(request);
+			try {
+				if (id > 0) {
+					model.update(bean);
+				}
+				ServletUtility.setBean(bean, request);
+				ServletUtility.setSuccessMessage("User updated successfully", request);
+			} catch (DuplicateRecordException e) {
+				e.printStackTrace();
+				ServletUtility.handleException(e, request, response);
+				return;
+			} catch (ApplicationException e) {
+				ServletUtility.setBean(bean, request);
+				ServletUtility.setErrorMessage("Error in Add staff", request);
+			}
+		} else if (OP_CANCEL.equalsIgnoreCase(op)) {
+			ServletUtility.redirect(ORSView.STAFF_LIST_CTL, request, response);
+			return;
+		} else if (OP_RESET.equalsIgnoreCase(op)) {
+			ServletUtility.redirect(ORSView.STAFF_CTL, request, response);
+			return;
 		}
+		ServletUtility.forward(getView(), request, response);
 	}
 
 	@Override

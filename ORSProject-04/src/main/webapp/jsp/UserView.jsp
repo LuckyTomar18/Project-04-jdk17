@@ -86,7 +86,11 @@
 						value="<%=DataUtility.getStringData(bean.getLogin())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("login", request)%></font></td>
 				</tr>
-				<tr>
+				<%
+				if (bean != null && bean.getId() > 0) {
+				%><%
+				} else {
+				%><tr>
 					<th align="left">Password<span style="color: red">*</span></th>
 					<td><input type="password" name="password"
 						placeholder="Enter Password"
@@ -99,11 +103,14 @@
 						placeholder="Enter Confirm Password"
 						value="<%=DataUtility.getStringData(bean.getPassword())%>"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("confirmPassword", request)%></font></td>
-				</tr>
+				</tr><%
+				}
+				%>
+				
 				<tr>
 					<th align="left">Date of Birth<span style="width: 98%"
 						style="color: red">*</span></th>
-					<td><input type="date" name="dob" id="udate" placeholder="Enter DOB"
+					<td><input type="text" name="dob" id="udate" placeholder="Enter DOB"
 						value="<%=DataUtility.getDateString(bean.getDob())%>"
 						style="width: 98%"></td>
 					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("dob", request)%></font></td>
@@ -151,6 +158,25 @@
 						}
 						%>
 				</tr>
+				<%
+				if (bean != null && bean.getId() > 0) {
+				%><tr>
+					<td><input type="hidden" name="password"
+						placeholder="Enter Password"
+						value="<%=DataUtility.getStringData(bean.getPassword())%>"></td>
+					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("password", request)%></font></td>
+				</tr>
+				<tr>
+					<td><input type="hidden" name="confirmPassword"
+						placeholder="Enter Confirm Password"
+						value="<%=DataUtility.getStringData(bean.getPassword())%>"></td>
+					<td style="position: fixed;"><font color="red"> <%=ServletUtility.getErrorMessage("confirmPassword", request)%></font></td>
+				</tr><%
+				} else {
+				%><%
+				}
+				%>
+				
 			</table>
 		</div>
 	</form>
