@@ -1,15 +1,4 @@
-/**
- * LoginCtl Servlet.
- * <p>
- * This controller handles user login, logout, and redirects to registration.
- * It validates login credentials, authenticates the user, and manages the session.
- * </p>
- * 
- * Author: Lucky
- * @version 1.0
- */
-
-package in.co.rays.proj4.controller;
+package in.co.rays.project_3.controller;
 
 import java.io.IOException;
 
@@ -19,163 +8,183 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import in.co.rays.proj4.bean.BaseBean;
-import in.co.rays.proj4.bean.RoleBean;
-import in.co.rays.proj4.bean.UserBean;
-import in.co.rays.proj4.exception.ApplicationException;
-import in.co.rays.proj4.model.RoleModel;
-import in.co.rays.proj4.model.UserModel;
-import in.co.rays.proj4.util.DataUtility;
-import in.co.rays.proj4.util.DataValidator;
-import in.co.rays.proj4.util.PropertyReader;
-import in.co.rays.proj4.util.ServletUtility;
+import org.apache.log4j.Logger;
+import org.hibernate.exception.JDBCConnectionException;
 
-@WebServlet(name = "LoginCtl", urlPatterns = { "/LoginCtl" })
+import in.co.rays.project_3.dto.BaseDTO;
+import in.co.rays.project_3.dto.RoleDTO;
+import in.co.rays.project_3.dto.UserDTO;
+import in.co.rays.project_3.exception.ApplicationException;
+import in.co.rays.project_3.model.ModelFactory;
+import in.co.rays.project_3.model.RoleModelInt;
+import in.co.rays.project_3.model.UserModelInt;
+import in.co.rays.project_3.util.DataUtility;
+import in.co.rays.project_3.util.DataValidator;
+import in.co.rays.project_3.util.PropertyReader;
+import in.co.rays.project_3.util.ServletUtility;
+
+/**
+ * login functionality controller. perform login operation
+ * 
+ * @author Lucky
+ *
+ */
+
+@WebServlet(urlPatterns = { "/LoginCtl" })
 public class LoginCtl extends BaseCtl {
 
-    public static final String OP_SIGN_IN = "Sign In";
-    public static final String OP_SIGN_UP = "Sign Up";
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Validates the login input fields.
-     * Checks for null or invalid email for login and empty password.
-     *
-     * @param request HttpServletRequest
-     * @return boolean true if valid, false otherwise
-     */
-    @Override
-    protected boolean validate(HttpServletRequest request) {
-        boolean pass = true;
+	public static final String OP_REGISTER = "Register";
+	public static final String OP_SIGN_IN = "SignIn";
+	public static final String OP_SIGN_UP = "SignUp";
+	public static final String OP_LOG_OUT = "logout";
 
-        String op = request.getParameter("operation");
+	private static Logger log = Logger.getLogger(LoginCtl.class);
 
-        if (OP_SIGN_UP.equals(op) || OP_LOG_OUT.equals(op)) {
-            return pass;
-        }
+	protected boolean validate(HttpServletRequest request) {
 
-        if (DataValidator.isNull(request.getParameter("login"))) {
-            request.setAttribute("login", PropertyReader.getValue("error.require", "Login Id"));
-            pass = false;
-        } else if (!DataValidator.isEmail(request.getParameter("login"))) {
-            request.setAttribute("login", PropertyReader.getValue("error.email", "Login "));
-            pass = false;
-        }
+		boolean pass = true;
 
-        if (DataValidator.isNull(request.getParameter("password"))) {
-            request.setAttribute("password", PropertyReader.getValue("error.require", "Password"));
-            pass = false;
-        }
+		String op = request.getParameter("operation");
 
-        return pass;
-    }
+		if (OP_SIGN_UP.equals(op) || OP_LOG_OUT.equals(op)) {
+			return pass;
+		}
+//		System.out.println(request.getParameter("login") + ".........." + request.getParameter("password"));
 
-    /**
-     * Populates a UserBean from request parameters.
-     *
-     * @param request HttpServletRequest
-     * @return BaseBean containing login and password
-     */
-    @Override
-    protected BaseBean populateBean(HttpServletRequest request) {
-        UserBean bean = new UserBean();
+		if (DataValidator.isNull(request.getParameter("login"))) {
+			request.setAttribute("login", PropertyReader.getValue("error.require", "Login Id"));
+			pass = false;
+		} else if (!DataValidator.isEmail(request.getParameter("login"))) {
+			request.setAttribute("login", PropertyReader.getValue("error.email", "Login "));
+			pass = false;
+		}
+		if (DataValidator.isNull(request.getParameter("password"))) {
+			request.setAttribute("password", PropertyReader.getValue("error.require", "password"));
+			pass = false;
+		}
 
-        bean.setLogin(DataUtility.getString(request.getParameter("login")));
-        bean.setPassword(DataUtility.getString(request.getParameter("password")));
+		return pass;
 
-        return bean;
-    }
+	}
 
-    /**
-     * Handles HTTP GET requests.
-     * Handles logout operation and forwards to the login view.
-     *
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	protected BaseDTO populateDTO(HttpServletRequest request) {
 
-        HttpSession session = request.getSession();
-        String op = DataUtility.getString(request.getParameter("operation"));
+		UserDTO dto = new UserDTO();
 
-        if (OP_LOG_OUT.equals(op)) {
-            session.invalidate();
-            ServletUtility.setSuccessMessage("Logout Successful!", request);
-        }
+		System.out.println(request.getParameter("login"));
 
-        ServletUtility.forward(getView(), request, response);
-    }
+		dto.setId(DataUtility.getLong(request.getParameter("id")));
+		dto.setLogin(DataUtility.getString(request.getParameter("login")));
+		dto.setPassword(DataUtility.getString(request.getParameter("password")));
+		return dto;
 
-    /**
-     * Handles HTTP POST requests.
-     * Performs login, authentication, and redirects to appropriate views.
-     *
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws ServletException
-     * @throws IOException
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	}
 
-        HttpSession session = request.getSession();
-        UserModel model = new UserModel();
-        RoleModel role = new RoleModel();
-        String op = DataUtility.getString(request.getParameter("operation"));
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 
-        if (OP_SIGN_IN.equalsIgnoreCase(op)) {
-            UserBean bean = (UserBean) populateBean(request);
+		System.out.println(request.getParameter("login"));
 
-            try {
-                bean = model.authenticate(bean.getLogin(), bean.getPassword());
+		String op = request.getParameter("operation");
 
-                if (bean != null) {
-                    session.setAttribute("user", bean);
-                    RoleBean rolebean = role.findByPk(bean.getRoleId());
+		UserModelInt model = ModelFactory.getInstance().getUserModel();
 
-                    if (rolebean != null) {
-                        session.setAttribute("role", rolebean.getName());
-                    }
+		HttpSession session = request.getSession(true);
 
-                    String uri = (String) request.getParameter("uri");
+		long id = DataUtility.getLong(request.getParameter("id"));
+
+		if (OP_LOG_OUT.equals(op)) {
+			session = request.getSession();
+			session.invalidate();
+			ServletUtility.setSuccessMessage("User Logged Out Successfully!", request);
+			ServletUtility.forward(ORSView.LOGIN_VIEW, request, response);
+			return;
+		}
+		if (id > 0) {
+			UserDTO dto;
+			try {
+				dto = model.findByPK(id);
+				ServletUtility.setDto(dto, request);
+			} catch (ApplicationException e) {
+
+				e.printStackTrace();
+				ServletUtility.handleException(e, request, response);
+				return;
+			}
+
+		}
+		ServletUtility.forward(getView(), request, response);
+
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+
+		String op = request.getParameter("operation");
+
+		HttpSession session = request.getSession(true);
+
+		UserModelInt userModel = ModelFactory.getInstance().getUserModel();
+		RoleModelInt model1 = ModelFactory.getInstance().getRoleModel();
+
+		if (OP_SIGN_IN.equalsIgnoreCase(op)) {
+			UserDTO dto = (UserDTO) populateDTO(request);
+			try {
+				dto = userModel.authenticate(dto.getLogin(), dto.getPassword());
+				if (dto != null) {
+					session.setAttribute("user", dto);
+					long roleId = dto.getRoleId();
+					RoleDTO rdto = model1.findByPK(roleId);
+					if (rdto != null) {
+						session.setAttribute("role", rdto.getName());
+					}
+					String uri = (String) request.getParameter("uri");
 					if (uri == null || "null".equalsIgnoreCase(uri)) {
 						ServletUtility.redirect(ORSView.WELCOME_CTL, request, response);
 						return;
 					} else {
-						ServletUtility.redirect(uri, request, response);
+						System.out.println();
+						if (rdto.getId() == 1) {
+							ServletUtility.redirect(uri, request, response);
+						} else {
+							ServletUtility.redirect(ORSView.WELCOME_CTL, request, response);
+						}
+
 						return;
 					}
 
-                } else {
-                    bean = (UserBean) populateBean(request);
-                    ServletUtility.setBean(bean, request);
-                    ServletUtility.setErrorMessage("Invalid LoginId And Password", request);
-                }
+				} else {
+					dto = (UserDTO) populateDTO(request);
+					ServletUtility.setDto(dto, request);
+					ServletUtility.setErrorMessage("Invalid LoginId And Password!", request);
+				}
 
-            } catch (ApplicationException e) {
-                e.printStackTrace();
-                return;
-            }
+			} catch (ApplicationException | JDBCConnectionException e1) {
+				System.out.println("in catch block ==================>>>>>>>>> ");
+				log.error(e1);
+//				ServletUtility.handleException(e, request, response);
+				ServletUtility.setErrorMessage("YOUR MYSQL CONTAINER IS OFF COMMUNICTAION LINK FAILURE!", request);
+				ServletUtility.forward(getView(), request, response);
+				return;
+			}
 
-        } else if (OP_SIGN_UP.equalsIgnoreCase(op)) {
-            ServletUtility.redirect(ORSView.USER_REGISTRATION_CTL, request, response);
-            return;
-        }
+		} else if (OP_SIGN_UP.equalsIgnoreCase(op)) {
 
-        ServletUtility.forward(getView(), request, response);
-    }
+			ServletUtility.redirect(ORSView.USER_REGISTRATION_CTL, request, response);
+			return;
 
-    /**
-     * Returns the login view page.
-     *
-     * @return String view page
-     */
-    @Override
-    protected String getView() {
-        return ORSView.LOGIN_VIEW;
-    }
+		}
+
+		ServletUtility.forward(getView(), request, response);
+
+	}
+
+	@Override
+	protected String getView() {
+
+		return ORSView.LOGIN_VIEW;
+	}
+
 }
