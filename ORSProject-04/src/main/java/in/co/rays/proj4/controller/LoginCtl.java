@@ -157,7 +157,9 @@ public class LoginCtl extends BaseCtl {
                 }
 
             } catch (ApplicationException e) {
-                e.printStackTrace();
+ //               e.printStackTrace();
+            	ServletUtility.setErrorMessage("YOUR MYSQL CONTAINER IS OFF COMMUNICTAION LINK FAILURE!", request);
+            	ServletUtility.forward(getView(), request, response);
                 return;
             }
 

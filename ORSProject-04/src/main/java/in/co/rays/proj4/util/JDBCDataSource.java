@@ -7,38 +7,38 @@ import java.util.ResourceBundle;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
- * <p>
+ * 
  * JDBCDataSource is a Singleton class responsible for managing all database
  * connections using the C3P0 connection pooling library.
- * </p>
+ * 
  *
- * <p>
+ * 
  * This utility:
- * </p>
- * <ul>
- *     <li>Loads database configuration from system.properties file</li>
- *     <li>Creates and manages a shared connection pool</li>
- *     <li>Provides static methods to acquire and close connections</li>
- *     <li>Ensures efficient memory and resource usage</li>
- * </ul>
+ * 
+ * 
+ * Loads database configuration from system.properties file
+ * Creates and manages a shared connection pool
+ * Provides static methods to acquire and close connections
+ * Ensures efficient memory and resource usage
+ * 
  *
- * <p>
+ * 
  * Parameters loaded from the ResourceBundle:
- * </p>
- * <ul>
- *     <li>driver � JDBC driver class</li>
- *     <li>url � Database connection URL</li>
- *     <li>username � DB username</li>
- *     <li>password � DB password</li>
- *     <li>initialpoolsize � starting number of connections</li>
- *     <li>acquireincrement � connections added when pool is exhausted</li>
- *     <li>maxpoolsize � maximum allowed connections</li>
- * </ul>
+ * 
+ * 
+ *     driver  JDBC driver class
+ *     url � Database connection URL
+ *     username � DB username
+ *     password � DB password
+ *     initialpoolsize � starting number of connections
+ *     acquireincrement � connections added when pool is exhausted
+ *     maxpoolsize � maximum allowed connections
+ * 
  *
- * <p>
+ * 
  * This class is used throughout the project to safely obtain and release
  * connections for all model classes.
- * </p>
+ * 
  *
  * @author Lucky
  * @version 1.0
